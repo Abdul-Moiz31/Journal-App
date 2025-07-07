@@ -7,5 +7,5 @@ import org.bson.types.ObjectId;
 public interface UserRepository extends MongoRepository<User, ObjectId> {
 
     User findByUserName(String userName);
-
+ 
 }
