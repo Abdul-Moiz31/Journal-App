@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import net.engineeringdigest.journalApp.repo.JournalEntryrepo;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
+import net.engineeringdigest.journalApp.entity.User;
 import java.util.List;
 import org.bson.types.ObjectId;
 import java.util.Optional;
@@ -15,6 +16,10 @@ import java.util.Optional;
 
     @Autowired
     private JournalEntryrepo journalEntryrepo;
+
+    public void saveEntry(JournalEntry entry , User user){
+        journalEntryrepo.save(entry);
+    }
 
     public void saveEntry(JournalEntry entry){
         journalEntryrepo.save(entry);
