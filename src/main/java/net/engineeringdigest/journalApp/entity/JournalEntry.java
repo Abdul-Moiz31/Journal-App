@@ -1,17 +1,20 @@
+
 package net.engineeringdigest.journalApp.entity;
 
+import java.time.LocalDateTime;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import java.time.LocalDateTime;
-import org.bson.types.ObjectId;
 
 @Document(collection = "journal_entries")
 
 @Data
+@NoArgsConstructor
 public class JournalEntry {
 
     @Id
@@ -23,4 +26,7 @@ public class JournalEntry {
 
     private LocalDateTime date;
 
+    public ObjectId getId() {
+        return id;
+    }
 }

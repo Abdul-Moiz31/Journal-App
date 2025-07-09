@@ -46,14 +46,14 @@ public class UserServices {
         return userRepository.findByUserName(userName);
     }
 
+
     public void addUser(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addUser'");
+        userRepository.save(user);
     }
 
+
     public void save(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+        userRepository.save(user);
     }
     
 }
