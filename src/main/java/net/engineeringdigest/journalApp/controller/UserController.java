@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.UserServices;
@@ -26,27 +28,14 @@ public class UserController {
     private UserServices userServices;
     
 
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userServices.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
-
-
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        userServices.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
-
-    @PutMapping("/{userName}")
-    public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable String userName) {
-        User userInDb = userServices.findByUserName(userName);
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        User userInDb = userServices.findByUserName(currentUserName);           
         if (userInDb != null) {
             userInDb.setUserName(user.getUserName());
-            userInDb.setPassword(user.getPassword());
+            userInDb.setPassword(userServices.getPasswordEncoder().encode(user.getPassword()));
             userServices.addUser(userInDb);
             return new ResponseEntity<>(userInDb, HttpStatus.OK);
         }
@@ -54,11 +43,11 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{userName}")
-    public ResponseEntity<?> deleteUser(@PathVariable String userName) {
-        User user = userServices.findByUserName(userName);
-        if (user != null) {
-            userServices.deleteById(user.getId());
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(@RequestBody User user) {
+        User userInDb   = userServices.findByUserName(user.getUserName());
+        if (userInDb != null) {
+            userServices.deleteById(userInDb.getId());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
