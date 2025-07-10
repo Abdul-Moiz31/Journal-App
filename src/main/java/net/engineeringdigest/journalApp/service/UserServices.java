@@ -2,10 +2,12 @@ package net.engineeringdigest.journalApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.Data;
 import net.engineeringdigest.journalApp.repo.UserRepository;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
+import java.util.Arrays;
+
 import net.engineeringdigest.journalApp.entity.User;
 import java.util.List;
 
@@ -19,6 +21,9 @@ public class UserServices {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // If you want to add a journal entry to a user, use this method:
     public void addJournalEntryToUser(JournalEntry entry, String userName) {
@@ -52,7 +57,9 @@ public class UserServices {
     }
 
 
-    public void save(User user) {
+    public void saveNewUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("ROLE_USER"));
         userRepository.save(user);
     }
     

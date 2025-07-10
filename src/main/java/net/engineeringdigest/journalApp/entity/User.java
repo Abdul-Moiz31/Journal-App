@@ -25,4 +25,5 @@ public class User {
     @NonNull    
     private String password;
     private List<JournalEntry> journal_entries = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
 }
