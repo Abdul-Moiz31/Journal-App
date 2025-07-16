@@ -1,12 +1,14 @@
 package net.engineeringdigest.journalApp.controller;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,7 @@ import net.engineeringdigest.journalApp.service.JournalEntryService;
 import net.engineeringdigest.journalApp.service.UserServices;
 
 @RestController
-@RequestMapping("/journal")
+@RequestMapping("/journal_entries")
 public class JournalEntryControllerV2 {
 
   @Autowired
@@ -32,32 +34,31 @@ public class JournalEntryControllerV2 {
   private UserServices userServices;
 
 
-  // Get all journal entries for a specific user
-  @GetMapping("/user/{userName}") // localhost:1533/journal/user/{userName}
-  public ResponseEntity<?> getAllJournalEntriesOfUser(@PathVariable String userName) {
+  // Get all journal entries for the authenticated user
+  @GetMapping
+  public ResponseEntity<?> getAllJournalEntriesOfUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userName = authentication.getName();
     User user = userServices.findByUserName(userName);
-    if (user != null && user.getJournal_entries() != null) {
-      return new ResponseEntity<>(user.getJournal_entries(), HttpStatus.OK);
+    List<JournalEntry> all = user.getJournal_entries();
+    if (all != null && !all.isEmpty()) {
+      return new ResponseEntity<>(all, HttpStatus.OK);
     }
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
 
-  // Create a new journal entry for a specific user
-  @PostMapping("/user/{userName}")
-  public ResponseEntity<?> createEntry(@PathVariable String userName, @RequestBody JournalEntry entry) {
-    try {
-      User user = userServices.findByUserName(userName);
-      if (user == null) {
-        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+  // Create a new journal entry for the authenticated user
+  @PostMapping
+    public ResponseEntity<JournalEntry> createEntryForUser(@RequestBody JournalEntry entry) {
+      try{
+        Authentication authentication  = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        journalEntryService.saveEntry(entry, userName);
+        return new ResponseEntity<>(entry, HttpStatus.CREATED);
+      }  catch(Exception e) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
-      entry.setDate(LocalDateTime.now());
-      user.getJournal_entries().add(entry);
-      userServices.addUser(user);
-      return new ResponseEntity<>(entry, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 
 

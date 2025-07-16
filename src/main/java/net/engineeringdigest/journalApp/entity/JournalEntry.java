@@ -1,6 +1,5 @@
 
 package net.engineeringdigest.journalApp.entity;
-
 import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
@@ -21,12 +20,7 @@ public class JournalEntry {
     private ObjectId id;
     @NonNull
     private String title;
-
     private String content;
-
     private LocalDateTime date;
 
-    public ObjectId getId() {
-        return id;
-    }
 }

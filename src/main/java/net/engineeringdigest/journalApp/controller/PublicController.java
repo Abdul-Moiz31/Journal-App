@@ -1,13 +1,12 @@
 package net.engineeringdigest.journalApp.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.UserServices;
 
@@ -24,9 +23,8 @@ public class PublicController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+   public void createUser(@RequestBody User user) {
         userServices.saveNewUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
 }
