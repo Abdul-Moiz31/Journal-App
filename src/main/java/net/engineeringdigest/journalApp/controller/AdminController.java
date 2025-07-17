@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.UserServices;
 
+//this is the admin controller
+
 @RestController
 @RequestMapping("/admin")
 
