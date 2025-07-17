@@ -23,8 +23,10 @@ import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.service.JournalEntryService;
 import net.engineeringdigest.journalApp.service.UserServices;
 
+import java.util.Collections;
+
 @RestController
-@RequestMapping("/journal_entries")
+@RequestMapping("/journal")
 public class JournalEntryControllerV2 {
 
   @Autowired
@@ -40,11 +42,14 @@ public class JournalEntryControllerV2 {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String userName = authentication.getName();
     User user = userServices.findByUserName(userName);
-    List<JournalEntry> all = user.getJournal_entries();
-    if (all != null && !all.isEmpty()) {
-      return new ResponseEntity<>(all, HttpStatus.OK);
+    if (user == null) {
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    List<JournalEntry> all = user.getJournal_entries();
+    if (all == null || all.isEmpty()) {
+        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(all, HttpStatus.OK);
   }
 
 
